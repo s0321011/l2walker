@@ -1,12 +1,6 @@
 # This workflow will build a Java project with Ant
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-ant
 
-# This workflow will build a Java project with Ant
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-ant
-
-# This workflow will build a Java project with Ant
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-ant
-
 name: Build with GraalVM and Apache Ant
 
 on:
@@ -19,6 +13,9 @@ jobs:
   build:
 
     runs-on: self-hosted
+
+    env:
+      CUSTOM_WORKSPACE: "G:\actions-runner-workspace\"
 
     steps:
     - name: Set up JDK 11
@@ -39,14 +36,14 @@ jobs:
         echo "GRAALVM_HOME=$env:USERPROFILE\graalvm\graalvm-ce-java11-22.0.1" >> $GITHUB_ENV
     - name: Build with Apache Ant
       run: |
-        cd $GITHUB_WORKSPACE\l2walker\l2walker\build
+        cd $CUSTOM_WORKSPACE\l2walker\l2walker\build
         ant -noinput -buildfile build.xml
     - name: Move JAR to root directory
       run: |
-        mv $GITHUB_WORKSPACE\l2walker\l2walker\build\l2walker.jar $GITHUB_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
+        mv $CUSTOM_WORKSPACE\l2walker\l2walker\build\l2walker.jar $CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
     - name: Add JAR to Git
       run: |
-        git add $GITHUB_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
+        git add $CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
     - name: Commit changes
       run: |
         git commit -m "Add l2walker.jar"
