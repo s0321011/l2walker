@@ -30,6 +30,7 @@ jobs:
 
       - name: Download GraalVM
         run: |
+          cd $CUSTOM_WORKSPACE
           Invoke-WebRequest -Uri "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_windows-x64_bin.zip" -OutFile "graalvm.zip"
           Expand-Archive -Path "graalvm.zip" -DestinationPath "$env:USERPROFILE\graalvm"
 
