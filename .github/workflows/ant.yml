@@ -25,4 +25,4 @@ jobs:
       run: ant -noinput -buildfile build.xml
     - name: Create JAR in root directory
       run: |
-        mv build/distr/l2walker.jar ./l2walker.jar
+        mv l2walker.jar ./l2walker.jar
