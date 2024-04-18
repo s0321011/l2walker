@@ -30,7 +30,7 @@ jobs:
 
       - name: Download and Extract GraalVM
         run: |
-          Expand-Archive -Path "${env:CUSTOM_WORKSPACE}/_tool/graalvm.zip" -DestinationPath "$env:USERPROFILE\graalvm"
+          Expand-Archive -Path "G:\actions-runner-workspace\_tool\graalvm.zip" -DestinationPath "$env:USERPROFILE\graalvm"
 
       - name: Set GRAALVM_HOME
         run: |
