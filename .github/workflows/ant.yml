@@ -29,14 +29,14 @@ jobs:
       run: |
         Invoke-WebRequest -Uri "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_windows-x64_bin.zip" -OutFile "graalvm.zip"
         Expand-Archive -Path "graalvm.zip" -DestinationPath "graalvm"
-        $env:GRAALVM_HOME = "$PWD/graalvm/graalvm-ce-java11-22.0.1"
+        $env:GRAALVM_HOME = "$(Agent.WorkFolder)\graalvm\graalvm-ce-java11-22.0.1"
         $env:PATH += ";$env:GRAALVM_HOME\bin"
     - name: Build Native Executable
       run: |
-        cd ${{ github.workspace }}/l2walker/build
+        cd $(Agent.WorkFolder)\l2walker\l2walker\build
         native-image.cmd -jar l2walker.jar l2walker.exe
     - name: Move EXE to root directory
-      run: Move-Item -Path D:\a\l2walker\l2walker\build\l2walker.exe -Destination .
+      run: Move-Item -Path $(Agent.WorkFolder)\l2walker\l2walker\build\l2walker.exe -Destination $(Agent.WorkFolder)\l2walker
     - name: Add EXE to Git
       run: |
         git config --global user.email "lkostyriev@gmail.com"
