@@ -15,7 +15,7 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: self-hosted
 
     steps:
     - name: Set up JDK 11
