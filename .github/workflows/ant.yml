@@ -12,7 +12,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -21,18 +21,29 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
-    - name : git Email
-      run :  git config --global user.email "lkostyriev@gmail.com"
-    - name : git Name
-      run :  git config --global user.name "warshipfucker"
+    - name: Install Apache Ant
+      run: choco install ant -y
     - name: Build with Ant
       run: ant -noinput -buildfile build.xml
-    - name: Move JAR to root directory
-      run: mv /home/runner/work/l2walker/l2walker/build/l2walker.jar ./l2walker.jar
-    - name: Add JAR to Git
-      run: git add l2walker.jar
+    - name: Download and extract GraalVM
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_windows-x64_bin.zip" -OutFile "graalvm.zip"
+        Expand-Archive -Path "graalvm.zip" -DestinationPath "graalvm"
+        $env:GRAALVM_HOME = "$PWD/graalvm/graalvm-ce-java11-22.0.1"
+        $env:PATH += ";$env:GRAALVM_HOME\bin"
+    - name: Build Native Executable
+      run: |
+        cd ${{ github.workspace }}/l2walker/build
+        native-image.cmd -jar l2walker.jar l2walker.exe
+    - name: Move EXE to root directory
+      run: Move-Item -Path l2walker/build/l2walker.exe -Destination .
+    - name: Add EXE to Git
+      run: |
+        git config --global user.email "lkostyriev@gmail.com"
+        git config --global user.name "warshipfucker"
+        git add l2walker.exe
     - name: Commit changes
-      run: git commit -m "Add l2walker.jar"
+      run: git commit -m "Add l2walker.exe"
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
