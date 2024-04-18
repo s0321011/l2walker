@@ -29,8 +29,7 @@ jobs:
       run: |
         Invoke-WebRequest -Uri "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_windows-x64_bin.zip" -OutFile "graalvm.zip"
         Expand-Archive -Path "graalvm.zip" -DestinationPath "graalvm"
-        $env:GRAALVM_HOME = "$(GITHUB_WORKSPACE)\graalvm\graalvm-ce-java11-22.0.1"
-        $env:PATH += ";$env:GRAALVM_HOME\bin"
+        $env:PATH += ";$(pwd)/graalvm/graalvm-ce-java11-22.0.1/bin"
     - name: Build Native Executable
       run: |
         cd $(GITHUB_WORKSPACE)\l2walker\l2walker\build
