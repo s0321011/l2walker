@@ -30,7 +30,7 @@ jobs:
 
       - name: Download and Extract GraalVM
         run: |
-          Copy-Item -Path "G:\actions-runner-workspace\_tool\graalvm-community-openjdk-22.0.1+8.1" -Destination "$env:USERPROFILE\graalvm"
+          Copy-Item -Path "G:\actions-runner-workspace\_tool\graalvm-community-openjdk-22.0.1+8.1" -Destination "G:\actions-runner-workspace\graalvm"
 
       - name: Set GRAALVM_HOME
         run: |
