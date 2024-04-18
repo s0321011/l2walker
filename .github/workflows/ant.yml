@@ -41,7 +41,7 @@ jobs:
 
     - name: Move JAR to root directory
       run: |
-        mv $GITHUB_WORKSPACE\l2walker\l2walker\build\l2walker.jar $GITHUB_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
+        Move-Item $GITHUB_WORKSPACE\l2walker\l2walker\build\l2walker.jar $GITHUB_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
 
     - name: Add JAR to Git
       run: |
