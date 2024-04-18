@@ -1,0 +1,52 @@
+# This workflow will build a Java project with Ant
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-ant
+
+name: Build and Release Java Application
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+
+    - name: Install Apache Ant
+      run: sudo apt-get install ant -y
+
+    - name: Build with Ant
+      run: ant dist
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v1.0.0  # Укажите тег, который вы хотите присвоить этому релизу
+        release_name: Release v1.0.0  # Имя релиза
+        body: Initial release  # Описание релиза
+        draft: false  # Установите значение true, чтобы сделать релиз черновиком
+        prerelease: false  # Установите значение true, чтобы сделать релиз предварительным
+
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: build/distr/l2walker.jar  # Путь к вашему JAR файлу
+        asset_name: l2walker.jar  # Имя актива
+        asset_content_type: application/java-archive
