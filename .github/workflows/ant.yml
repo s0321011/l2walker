@@ -35,7 +35,7 @@ jobs:
       run: |
         echo "GRAALVM_HOME=$env:USERPROFILE\graalvm\graalvm-ce-java11-22.0.1" >> $GITHUB_ENV
     - name: Build with Apache Ant
-       run: |
+      run: |
         cd $GITHUB_WORKSPACE/l2walker/l2walker/build
         ant -noinput -buildfile build.xml
     - name: Move JAR to root directory
