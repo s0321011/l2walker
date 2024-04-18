@@ -27,7 +27,7 @@ jobs:
 
     - name: Install GraalVM
       run: |
-        curl -L -o graalvm.tar.gz https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-<version>/graalvm-ce-java11-linux-amd64-21.3.3.1.tar.gz
+        curl -L -o graalvm.tar.gz https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.3.3.1/graalvm-ce-java11-linux-amd64-<version>.tar.gz
         tar -xzf graalvm.tar.gz
         export GRAALVM_HOME=$PWD/graalvm-ce-java11-21.3.3.1
         export PATH=$GRAALVM_HOME/bin:$PATH
