@@ -1,4 +1,4 @@
-# This workflow will build a Java project with Ant
+# This workflow will build a Java project with Ant using GraalVM
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-ant
 
 name: Build with GraalVM and Apache Ant
@@ -30,7 +30,7 @@ jobs:
 
       - name: Download and Extract GraalVM
         run: |
-          Expand-Archive -Path "G:\actions-runner-workspace\_tool\graalvm.zip" -DestinationPath "$env:USERPROFILE\graalvm"
+          Copy-Item -Path "G:\actions-runner-workspace\_tool\graalvm-community-openjdk-22.0.1+8.1" -Destination "$env:USERPROFILE\graalvm"
 
       - name: Set GRAALVM_HOME
         run: |
