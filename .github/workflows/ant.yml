@@ -45,7 +45,12 @@ jobs:
 
       - name: Move JAR to root directory
         run: |
-          mv $CUSTOM_WORKSPACE\l2walker\l2walker\build\l2walker.jar $CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
+          cd $CUSTOM_WORKSPACE\l2walker\l2walker\build
+          if (-not (Test-Path .\l2walker.jar)) {
+            echo "Error: JAR file not found in build directory."
+            exit 1
+            }
+            Move-Item .\l2walker.jar $CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
 
       - name: Add JAR to Git
         run: |
