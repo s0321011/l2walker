@@ -34,7 +34,7 @@ jobs:
 
       - name: Set GRAALVM_HOME
         run: |
-          echo "GRAALVM_HOME=$env:USERPROFILE\graalvm\graalvm-ce-java11-22.0.1" >> $GITHUB_ENV
+          echo "GRAALVM_HOME=G:\actions-runner-workspace\graalvm\graalvm-ce-java11-22.0.1" >> $GITHUB_ENV
 
       - name: Print Custom Workspace
         run: |
@@ -42,16 +42,16 @@ jobs:
 
       - name: Build with Apache Ant
         run: |
-          cd $env:CUSTOM_WORKSPACE\l2walker\l2walker\build
+          cd G:\actions-runner-workspace\l2walker\l2walker\build
           ant -noinput -buildfile build.xml
 
       - name: Move JAR to root directory
         run: |
-          mv $env:CUSTOM_WORKSPACE\l2walker\l2walker\build\l2walker.jar $env:CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
+          mv G:\actions-runner-workspace\l2walker\l2walker\build\l2walker.jar G:\actions-runner-workspace\l2walker\l2walker\l2walker\l2walker.jar
 
       - name: Add JAR to Git
         run: |
-          git add $env:CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
+          git add G:\actions-runner-workspace\l2walker\l2walker\l2walker\l2walker.jar
 
       - name: Commit changes
         run: |
