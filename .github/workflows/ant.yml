@@ -1,0 +1,40 @@
+name: Build and Run Native Executable
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+
+    - name: Install GraalVM
+      run: |
+        curl -L -o graalvm.tar.gz https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-<version>/graalvm-ce-java11-linux-amd64-<version>.tar.gz
+        tar -xzf graalvm.tar.gz
+        export GRAALVM_HOME=$PWD/graalvm-ce-java11-<version>
+        export PATH=$GRAALVM_HOME/bin:$PATH
+
+    - name: Build Native Executable
+      run: |
+        gu install native-image
+        cd your_project_directory
+        native-image -jar your_jar_file.jar your_executable_name
+        mv your_executable_name /path/to/destination/
+
+    - name: Run Native Executable
+      run: /path/to/destination/your_executable_name
