@@ -15,39 +15,46 @@ jobs:
     runs-on: self-hosted
 
     env:
-      CUSTOM_WORKSPACE: "G:\actions-runner-workspace\"
+      CUSTOM_WORKSPACE: "G:\actions-runner-workspace"
 
     steps:
-    - name: Set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
 
-    - name: Install Apache Ant
-      run: |
-        choco install ant -y
-    - name: Download GraalVM
-      run: |
-        Invoke-WebRequest -Uri "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_windows-x64_bin.zip" -OutFile "graalvm.zip"
-        Expand-Archive -Path "graalvm.zip" -DestinationPath "$env:USERPROFILE\graalvm"
-    - name: Set GRAALVM_HOME
-      run: |
-        echo "GRAALVM_HOME=$env:USERPROFILE\graalvm\graalvm-ce-java11-22.0.1" >> $GITHUB_ENV
-    - name: Build with Apache Ant
-      run: |
-        cd $CUSTOM_WORKSPACE\l2walker\l2walker\build
-        ant -noinput -buildfile build.xml
-    - name: Move JAR to root directory
-      run: |
-        mv $CUSTOM_WORKSPACE\l2walker\l2walker\build\l2walker.jar $CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
-    - name: Add JAR to Git
-      run: |
-        git add $CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
-    - name: Commit changes
-      run: |
-        git commit -m "Add l2walker.jar"
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Apache Ant
+        run: |
+          choco install ant -y
+
+      - name: Download GraalVM
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_windows-x64_bin.zip" -OutFile "graalvm.zip"
+          Expand-Archive -Path "graalvm.zip" -DestinationPath "$env:USERPROFILE\graalvm"
+
+      - name: Set GRAALVM_HOME
+        run: |
+          echo "GRAALVM_HOME=$env:USERPROFILE\graalvm\graalvm-ce-java11-22.0.1" >> $GITHUB_ENV
+
+      - name: Build with Apache Ant
+        run: |
+          cd $CUSTOM_WORKSPACE\l2walker\l2walker\build
+          ant -noinput -buildfile build.xml
+
+      - name: Move JAR to root directory
+        run: |
+          mv $CUSTOM_WORKSPACE\l2walker\l2walker\build\l2walker.jar $CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
+
+      - name: Add JAR to Git
+        run: |
+          git add $CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
+
+      - name: Commit changes
+        run: |
+          git commit -m "Add l2walker.jar"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
