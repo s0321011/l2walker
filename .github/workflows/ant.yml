@@ -21,6 +21,10 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
+    - name : git Email
+      run :  git config --global user.email "lkostyriev@gmail.com"
+    - name : git Name
+      run :  git config --global user.name "warshipfucker"
     - name: Build with Ant
       run: ant -noinput -buildfile build.xml
     - name: Move JAR to root directory
