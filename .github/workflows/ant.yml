@@ -24,7 +24,7 @@ jobs:
     - name: Build with Ant
       run: ant -noinput -buildfile build.xml
     - name: Move JAR to root directory
-      run: mv build/distr/l2walker.jar ./l2walker.jar
+      run: mv /home/runner/work/l2walker/l2walker/build/l2walker.jar ./l2walker.jar
     - name: Add JAR to Git
       run: git add l2walker.jar
     - name: Commit changes
