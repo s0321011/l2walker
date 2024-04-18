@@ -1,6 +1,9 @@
 # This workflow will build a Java project with Ant
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-ant
 
+# This workflow will build a Java project with Ant
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-ant
+
 name: Build with GraalVM and Apache Ant
 
 on:
@@ -28,32 +31,30 @@ jobs:
         run: |
           choco install ant -y
 
-      - name: Download GraalVM
+      - name: Download and Extract GraalVM
         run: |
-          cd $CUSTOM_WORKSPACE
-          Expand-Archive -Path "graalvm.zip" -DestinationPath "$env:USERPROFILE\graalvm"
+          Expand-Archive -Path "${env:CUSTOM_WORKSPACE}\_tool\graalvm.zip" -DestinationPath "$env:USERPROFILE\graalvm"
 
       - name: Set GRAALVM_HOME
         run: |
           echo "GRAALVM_HOME=$env:USERPROFILE\graalvm\graalvm-ce-java11-22.0.1" >> $GITHUB_ENV
 
+      - name: Print Custom Workspace
+        run: |
+          echo "Custom Workspace: $CUSTOM_WORKSPACE"
+
       - name: Build with Apache Ant
         run: |
-          cd $CUSTOM_WORKSPACE\l2walker\l2walker\build
+          cd $env:CUSTOM_WORKSPACE\l2walker\l2walker\build
           ant -noinput -buildfile build.xml
 
       - name: Move JAR to root directory
         run: |
-          cd $CUSTOM_WORKSPACE\l2walker\l2walker\build
-          if (-not (Test-Path .\l2walker.jar)) {
-            echo "Error: JAR file not found in build directory."
-            exit 1
-            }
-            Move-Item .\l2walker.jar $CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
+          mv $env:CUSTOM_WORKSPACE\l2walker\l2walker\build\l2walker.jar $env:CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
 
       - name: Add JAR to Git
         run: |
-          git add $CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
+          git add $env:CUSTOM_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
 
       - name: Commit changes
         run: |
