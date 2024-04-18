@@ -36,7 +36,7 @@ jobs:
         cd ${{ github.workspace }}/l2walker/build
         native-image.cmd -jar l2walker.jar l2walker.exe
     - name: Move EXE to root directory
-      run: Move-Item -Path l2walker/build/l2walker.exe -Destination .
+      run: Move-Item -Path D:\a\l2walker\l2walker\build\l2walker.exe -Destination .
     - name: Add EXE to Git
       run: |
         git config --global user.email "lkostyriev@gmail.com"
