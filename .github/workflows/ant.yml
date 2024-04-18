@@ -36,12 +36,12 @@ jobs:
 
     - name: Build with Apache Ant
       run: |
-        cd $GITHUB_WORKSPACE\l2walker\l2walker\l2walker\build
+        cd $GITHUB_WORKSPACE\l2walker\l2walker\build
         ant -noinput -buildfile build.xml
 
     - name: Move JAR to root directory
       run: |
-        mv $GITHUB_WORKSPACE\l2walker\l2walker\l2walker\build\l2walker.jar $GITHUB_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
+        mv $GITHUB_WORKSPACE\l2walker\l2walker\build\l2walker.jar $GITHUB_WORKSPACE\l2walker\l2walker\l2walker\l2walker.jar
 
     - name: Add JAR to Git
       run: |
