@@ -5,14 +5,14 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
+//import org.lwjgl.LWJGLException;
+//import org.lwjgl.Sys;
 
 import fw.gui.bot.awtBotFrame;
-import fw.test.AWTGLRender;
+//import fw.test.AWTGLRender;
 import xmlex.config.ConfigSystem;
 
-import java.awt.Window.Type;
+//import java.awt.Window.Type;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
@@ -27,7 +27,7 @@ public class MainSwingForm extends Frame {
 	
 	HashMap<String, ServerConfig> mapServersConfig = new HashMap<String, ServerConfig>();
 		
-	public MainSwingForm() throws LWJGLException {
+	public MainSwingForm() throws Exception {
 		
 		setFont(new Font("Tahoma", Font.PLAIN, 12));
 		
@@ -84,7 +84,7 @@ public class MainSwingForm extends Frame {
 		_instance.setVisible(true);		
 		_instance.setLocationRelativeTo(null);
 		
-		System.out.println("LWGL Version: "+Sys.getVersion());
+//		System.out.println("LWGL Version: "+Sys.getVersion());
 	}
 
 	

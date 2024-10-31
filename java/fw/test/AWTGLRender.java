@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 
 import javax.swing.JComponent;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.AWTGLCanvas;
+//import org.lwjgl.LWJGLException;
+//import org.lwjgl.opengl.AWTGLCanvas;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.TrueTypeFont;
@@ -31,7 +31,7 @@ import fw.game.model.instances.L2NpcInstance;
 import fw.gui.game_canvas.L2MapCalc;
 import static org.lwjgl.opengl.GL11.*;
 
-public class AWTGLRender extends AWTGLCanvas implements Runnable {
+public class AWTGLRender /* extends AWTGLCanvas */ implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -79,217 +79,217 @@ public class AWTGLRender extends AWTGLCanvas implements Runnable {
 	 * 330); }
 	 */
 
-	public AWTGLRender(JComponent parent) throws LWJGLException {
-		super();
-		this.addComponentListener(new ComponentListener() {			
-			
-			public void componentShown(ComponentEvent arg0) {
-				setEnabled(true);				
-			}			
-			
-			public void componentResized(ComponentEvent evt) {}			
-			
-			public void componentMoved(ComponentEvent arg0) {}			
-			
-			public void componentHidden(ComponentEvent arg0) {
-				setEnabled(false);					
-			}
-		});
-		this.addMouseListener(new MouseListener() {		
-			
-			public void mouseReleased(MouseEvent evt) {}			
-			
-			public void mousePressed(MouseEvent evt) {}			
-			
-			public void mouseExited(MouseEvent evt) {}			
-			
-			public void mouseEntered(MouseEvent evt) {}			
-			
-			public void mouseClicked(MouseEvent evt) {
-				//_log.info("Click: "+evt.getX()+" y: "+evt.getY());
-				if(_game.getSelfChar() == null) return;
-				
-				//_combatPoly.addPoint(_mapCalc.MapXtoReal(evt.getX()), _mapCalc.MapYtoReal(evt.getY()));
-				
-				//_game.getSelfChar().sendPacket(new MoveBackwardToLocation(
-				//		_game.getSelfChar().getX()-(map_center_x - evt.getX())*10, 
-				//		_game.getSelfChar().getY()-(map_center_y - evt.getY())*10, 
-				//		_game.getSelfChar().getZ()));
-				_game.getSelfChar().sendPacket(new MoveBackwardToLocation(
-						_mapCalc.MapXtoReal(evt.getX()),
-						_mapCalc.MapYtoReal(evt.getY()),
-						_game.getSelfChar().getZ()
-						));
-			}
-		});
-		//this.parent.add
-		_mapCalc = new L2MapCalc();		
-		_mapCalc.setMapSize(900, 900);
-		ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(this, 100,200); 
-	} 
-	
-	public void paintGL() {
-		try {
-			if(!_enabled)
-				return;			
-			
-			if (getWidth() != current_width || getHeight() != current_height) {
-				
-				current_width = getWidth();
-				current_height = getHeight();				
-				map_center_x = current_width/2;
-				map_center_y = current_height/2;
-				_mapCalc.setVpSize(current_width, current_height);
-						
-				glViewport(0, 0, current_width, current_height);		
-				glMatrixMode(GL_PROJECTION);
-				glLoadIdentity();
-				glOrtho(0, current_width, current_height, 0, 1,-1 );
-				glDisable(GL_DEPTH_TEST);
-				glMatrixMode(GL_MODELVIEW);
-				
-				//glEnable(GL_LINE_SMOOTH);
-				//glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-				
-				glEnable(GL_BLEND);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-				//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				
-			}
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-			
-			glColor3f(1f, 1f, 1f);
-			_canvas.MoveTo(0, 0);
-			try{
-				renderL2();
-			}catch(Exception e){e.printStackTrace();}
-					
-			_canvas.stopPrimitive();
-			swapBuffers();
-		} catch (LWJGLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	private void renderL2() {
-		
-		if(_game.getSelfChar() == null) return;
-		calculateMap();
-		cDef.bind();
-		
-		ArrayList<L2Object> _list = getWorld().getObjectList();
-		boolean rend = false;
-		for (L2Object obj:_list) {
-			_canvas.MoveTo(_mapCalc.toMapX(obj.getX()), _mapCalc.toMapY(obj.getY()));		
-				
-			if(obj.isNpc()){
-				rend = true;
-				if(((L2NpcInstance)obj).isAttackable())
-					cMob.bind();
-				else
-					cNpc.bind();
-			}
-			if(obj.isChar()){
-				cChar.bind();
-				rend = true;
-			}
-			if(obj.isDrop()){
-				rend = true;
-				cDrop.bind();
-			}
-			
-			if(rend)
-				_canvas.RectRel(2);//EllipseRel(5);
-			//if(obj.getToX() != 0 && obj.getToX() != obj.getX()){	
-			//	_canvas.MoveTo(_mapCalc.toMapX(obj.getX()), _mapCalc.toMapY(obj.getY()));
-			//	_canvas.LineToRel(_mapCalc.toMapX(obj.getToX()), _mapCalc.toMapY(obj.getToY()));
-			//}
-		}
-		cPlayer.bind();
-		_canvas.Ellipse(map_center_x, map_center_y, 4);
-		
-		//cCombatLine.bind();
-		//rendPolygon(_combatPoly);
-		//cCombatPoint.bind();
-		/*for (L2Point _p:_points) {
-			_canvas.MoveTo(_mapCalc.toMapX(_p.x), _mapCalc.toMapY(_p.y));
-			_canvas.FillRectRel(4);
-		}*/
-		
-	}
-	private void rendPolygon(Polygon p){
-		if(p.getPointCount()<2) return;
-		float[] _p = p.getPoint(0);
-		_canvas.MoveTo(_mapCalc.toMapX((int)_p[0]), _mapCalc.toMapY((int)_p[1]));	
-		
-		for (int i = 1; i < p.getPointCount(); i++){
-			 _p = p.getPoint(i);
-			_canvas.LineToRel(_mapCalc.toMapX((int)_p[0]), _mapCalc.toMapY((int)_p[1]));
-		}
-		
-	}
-
-	private void calculateMap() {		
-
-		_mapCalc.setScale(scale);			
-		
-		_x = _game.getSelfChar().getX();
-		_y = _game.getSelfChar().getY();
-		_z = _game.getSelfChar().getZ();
-
-		_mapCalc.mapPosCalc(_x, _y);
-
-		renderMap();
-	}
-	
-	private void renderMap(){
-		if (!_renderMap) return;
-		glEnable(GL_TEXTURE_2D);		
-		if (_curMap == null) {
-			try{				
-				_curMap = new Image("./data/maps/"+_mapCalc.xBlock+"_"+_mapCalc.yBlock+".jpg");			
-			}catch(Exception e){e.printStackTrace();}
-		}
-		if(_curMap != null)
-			_curMap.draw(_mapCalc.getMapVpPosX(), _mapCalc.getMapVpPosY(),900*scale,900*scale);
-		glDisable(GL_TEXTURE_2D);
-	}
-
+//	public AWTGLRender(JComponent parent) throws LWJGLException {
+//		super();
+//		this.addComponentListener(new ComponentListener() {			
+//			
+//			public void componentShown(ComponentEvent arg0) {
+//				setEnabled(true);				
+//			}			
+//			
+//			public void componentResized(ComponentEvent evt) {}			
+//			
+//			public void componentMoved(ComponentEvent arg0) {}			
+//			
+//			public void componentHidden(ComponentEvent arg0) {
+//				setEnabled(false);					
+//			}
+//		});
+//		this.addMouseListener(new MouseListener() {		
+//			
+//			public void mouseReleased(MouseEvent evt) {}			
+//			
+//			public void mousePressed(MouseEvent evt) {}			
+//			
+//			public void mouseExited(MouseEvent evt) {}			
+//			
+//			public void mouseEntered(MouseEvent evt) {}			
+//			
+//			public void mouseClicked(MouseEvent evt) {
+//				//_log.info("Click: "+evt.getX()+" y: "+evt.getY());
+//				if(_game.getSelfChar() == null) return;
+//				
+//				//_combatPoly.addPoint(_mapCalc.MapXtoReal(evt.getX()), _mapCalc.MapYtoReal(evt.getY()));
+//				
+//				//_game.getSelfChar().sendPacket(new MoveBackwardToLocation(
+//				//		_game.getSelfChar().getX()-(map_center_x - evt.getX())*10, 
+//				//		_game.getSelfChar().getY()-(map_center_y - evt.getY())*10, 
+//				//		_game.getSelfChar().getZ()));
+//				_game.getSelfChar().sendPacket(new MoveBackwardToLocation(
+//						_mapCalc.MapXtoReal(evt.getX()),
+//						_mapCalc.MapYtoReal(evt.getY()),
+//						_game.getSelfChar().getZ()
+//						));
+//			}
+//		});
+//		//this.parent.add
+//		_mapCalc = new L2MapCalc();		
+//		_mapCalc.setMapSize(900, 900);
+//		ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(this, 100,200); 
+//	} 
+//	
+//	public void paintGL() {
+//		try {
+//			if(!_enabled)
+//				return;			
+//			
+//			if (getWidth() != current_width || getHeight() != current_height) {
+//				
+//				current_width = getWidth();
+//				current_height = getHeight();				
+//				map_center_x = current_width/2;
+//				map_center_y = current_height/2;
+//				_mapCalc.setVpSize(current_width, current_height);
+//						
+//				glViewport(0, 0, current_width, current_height);		
+//				glMatrixMode(GL_PROJECTION);
+//				glLoadIdentity();
+//				glOrtho(0, current_width, current_height, 0, 1,-1 );
+//				glDisable(GL_DEPTH_TEST);
+//				glMatrixMode(GL_MODELVIEW);
+//				
+//				//glEnable(GL_LINE_SMOOTH);
+//				//glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+//				
+//				glEnable(GL_BLEND);
+//				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//				//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//				
+//			}
+//			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+//			glClear(GL_COLOR_BUFFER_BIT);
+//			
+//			glColor3f(1f, 1f, 1f);
+//			_canvas.MoveTo(0, 0);
+//			try{
+//				renderL2();
+//			}catch(Exception e){e.printStackTrace();}
+//					
+//			_canvas.stopPrimitive();
+//			swapBuffers();
+//		} catch (LWJGLException e) {
+//			throw new RuntimeException(e);
+//		}
+//	}
+//	
+//	private void renderL2() {
+//		
+//		if(_game.getSelfChar() == null) return;
+//		calculateMap();
+//		cDef.bind();
+//		
+//		ArrayList<L2Object> _list = getWorld().getObjectList();
+//		boolean rend = false;
+//		for (L2Object obj:_list) {
+//			_canvas.MoveTo(_mapCalc.toMapX(obj.getX()), _mapCalc.toMapY(obj.getY()));		
+//				
+//			if(obj.isNpc()){
+//				rend = true;
+//				if(((L2NpcInstance)obj).isAttackable())
+//					cMob.bind();
+//				else
+//					cNpc.bind();
+//			}
+//			if(obj.isChar()){
+//				cChar.bind();
+//				rend = true;
+//			}
+//			if(obj.isDrop()){
+//				rend = true;
+//				cDrop.bind();
+//			}
+//			
+//			if(rend)
+//				_canvas.RectRel(2);//EllipseRel(5);
+//			//if(obj.getToX() != 0 && obj.getToX() != obj.getX()){	
+//			//	_canvas.MoveTo(_mapCalc.toMapX(obj.getX()), _mapCalc.toMapY(obj.getY()));
+//			//	_canvas.LineToRel(_mapCalc.toMapX(obj.getToX()), _mapCalc.toMapY(obj.getToY()));
+//			//}
+//		}
+//		cPlayer.bind();
+//		_canvas.Ellipse(map_center_x, map_center_y, 4);
+//		
+//		//cCombatLine.bind();
+//		//rendPolygon(_combatPoly);
+//		//cCombatPoint.bind();
+//		/*for (L2Point _p:_points) {
+//			_canvas.MoveTo(_mapCalc.toMapX(_p.x), _mapCalc.toMapY(_p.y));
+//			_canvas.FillRectRel(4);
+//		}*/
+//		
+//	}
+//	private void rendPolygon(Polygon p){
+//		if(p.getPointCount()<2) return;
+//		float[] _p = p.getPoint(0);
+//		_canvas.MoveTo(_mapCalc.toMapX((int)_p[0]), _mapCalc.toMapY((int)_p[1]));	
+//		
+//		for (int i = 1; i < p.getPointCount(); i++){
+//			 _p = p.getPoint(i);
+//			_canvas.LineToRel(_mapCalc.toMapX((int)_p[0]), _mapCalc.toMapY((int)_p[1]));
+//		}
+//		
+//	}
+//
+//	private void calculateMap() {		
+//
+//		_mapCalc.setScale(scale);			
+//		
+//		_x = _game.getSelfChar().getX();
+//		_y = _game.getSelfChar().getY();
+//		_z = _game.getSelfChar().getZ();
+//
+//		_mapCalc.mapPosCalc(_x, _y);
+//
+//		renderMap();
+//	}
+//	
+//	private void renderMap(){
+//		if (!_renderMap) return;
+//		glEnable(GL_TEXTURE_2D);		
+//		if (_curMap == null) {
+//			try{				
+//				_curMap = new Image("./data/maps/"+_mapCalc.xBlock+"_"+_mapCalc.yBlock+".jpg");			
+//			}catch(Exception e){e.printStackTrace();}
+//		}
+//		if(_curMap != null)
+//			_curMap.draw(_mapCalc.getMapVpPosX(), _mapCalc.getMapVpPosY(),900*scale,900*scale);
+//		glDisable(GL_TEXTURE_2D);
+//	}
+//
 	public void run() {
-		if (!isEnabled()) 
-			return;		
-		try {
-			synchronized (this) {
-				repaint();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		if (!isEnabled())
+//			return;
+//		try {
+//			synchronized (this) {
+//				repaint();
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
-
-	public boolean isEnabled() {
-		return _enabled;
-	}
-
-	public void setEnabled(boolean _enabled) {
-		this._enabled = _enabled;
-	}
-
-	public L2World getWorld() {
-		return _game.getWorld();
-	}
-	public L2Player getMyChar() {
-		return _game.getSelfChar();
-	}
-
-	public void setGame(GameEngine game) {		
-		this._game = game;
-		_enabled = true;
-	}
-
-	public void setScale(int scale) {
-		this.scale = scale;		
-	}
+//
+//	public boolean isEnabled() {
+//		return _enabled;
+//	}
+//
+//	public void setEnabled(boolean _enabled) {
+//		this._enabled = _enabled;
+//	}
+//
+//	public L2World getWorld() {
+//		return _game.getWorld();
+//	}
+//	public L2Player getMyChar() {
+//		return _game.getSelfChar();
+//	}
+//
+//	public void setGame(GameEngine game) {		
+//		this._game = game;
+//		_enabled = true;
+//	}
+//
+//	public void setScale(int scale) {
+//		this.scale = scale;		
+//	}
 
 }

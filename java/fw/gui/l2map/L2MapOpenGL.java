@@ -5,7 +5,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.newdawn.slick.*;
 
-import static org.lwjgl.opengl.GL11.*;
+//import static org.lwjgl.opengl.GL11.*;
 import fw.game.GameEngine;
 import fw.test.GLRender;
 import fw.test.IGLRenderListener;

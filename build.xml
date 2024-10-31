@@ -39,7 +39,7 @@
 
 	<target name="compile" depends="init" description="Compile the source.">
 
-		<javac destdir="${build.classes}" optimize="on" source="1.7" target="1.7" encoding="UTF-8" includeantruntime="true" nowarn="on">
+		<javac destdir="${build.classes}" optimize="on" source="8" encoding="UTF-8" includeantruntime="true" nowarn="on">
 			<compilerarg value="-Xlint:all">
 			</compilerarg>
 			<src path="${src}" />
@@ -57,7 +57,7 @@
 		</copy>
 
 		<mkdir dir="${build.scripts}" />
-		<javac destdir="${build.scripts}" optimize="on" debug="on" source="1.7" target="1.7" encoding="UTF-8" includeantruntime="false" nowarn="off">
+		<javac destdir="${build.scripts}" optimize="on" debug="on" source="8" encoding="UTF-8" includeantruntime="false" nowarn="off">
 			<compilerarg value="-Xlint:all">
 			</compilerarg>
 			<src path="data" />
